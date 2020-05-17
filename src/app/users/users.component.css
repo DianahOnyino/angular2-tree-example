@@ -1,0 +1,41 @@
+.body {
+    padding: 0;
+    margin: 0;
+    background: #fff;
+}
+
+.main-content {
+    margin: 3% 12%;
+    background: aliceblue;
+    padding: 20px;
+    border-radius: 30px;
+}
+
+.header {
+  text-align: center;
+}
+
+.tree, .tree-content {
+    background: #fff;
+    width: 50%;
+    padding: 10px 20px;
+}
+
+.tree-content {
+    float: right;
+    margin-left: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.row {
+    display: flex
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+} 

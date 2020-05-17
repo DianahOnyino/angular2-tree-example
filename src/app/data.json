@@ -1,0 +1,54 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "uuid": "88f1705a-9827-11ea-bb37-0242ac130002",
+            "name": "User One",
+            "posts": [
+                {
+                    "id": 1,
+                    "uuid": "f247fb82-9827-11ea-bb37-0242ac130002",
+                    "title": "User One Post",
+                    "author": "typicode",
+                    "comments": [
+                        {
+                            "id": 1,
+                            "uuid": "f247fac4-9827-11ea-bb37-0242ac130002",
+                            "body": "first comment"
+                        },
+                        {
+                            "id": 2,
+                            "uuid": "f247f9de-9827-11ea-bb37-0242ac130002",
+                            "body": "second comment"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "uuid": "88f172c6-9827-11ea-bb37-0242ac130002",
+            "name": "User Two",
+            "posts": [
+                {
+                    "id": 1,
+                    "uuid": "f247f7ae-9827-11ea-bb37-0242ac130002",
+                    "title": "User Two Post",
+                    "author": "typicode",
+                    "comments": [
+                        {
+                            "id": 1,
+                            "uuid": "f247f6dc-9827-11ea-bb37-0242ac130002",
+                            "body": "another first comment"
+                        },
+                        {
+                            "id": 2,
+                            "uuid": "f247f57e-9827-11ea-bb37-0242ac130002",
+                            "body": "another second comment"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

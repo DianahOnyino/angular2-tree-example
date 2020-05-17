@@ -1,0 +1,21 @@
+<tree-root
+    #tree
+    *ngIf="nodes"
+    [focused]="true"
+    [nodes]="nodes"
+    [options]="options"
+    (initialized)="onInitialized($event)"
+    (activate)="onNodeSelected($event)"
+>
+    <ng-template #loadingTemplate></ng-template>
+
+    <ng-template
+        #treeNodeTemplate
+        let-node
+        let-index="index"
+    >
+        <a>
+            <span>{{ node?.data?.name }}</span>
+        </a>
+    </ng-template>
+</tree-root>
