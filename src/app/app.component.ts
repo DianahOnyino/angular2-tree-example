@@ -6,6 +6,7 @@ import * as userData from '../app/data.json'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
   title = 'angular2-tree-example';
   users = userData.users;

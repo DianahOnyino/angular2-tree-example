@@ -15,7 +15,11 @@
         let-index="index"
     >
         <a>
-            <span>{{ node?.data?.name }}</span>
+            <span *ngIf="node.data.nodeLevel == 0">{{ node.data.name }}</span>
+
+            <span *ngIf="node.data.nodeLevel > 0">
+                {{node.data.name.length > 40 ? node.data.name.substr(0, 40 - 1) + '...' : node.data.name}}
+            </span>
         </a>
     </ng-template>
 </tree-root>

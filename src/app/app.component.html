@@ -19,17 +19,28 @@
         >
             <h2>Selected Node Item</h2>
 
-            <p>NAME: {{selectedNode.userData.name}}</p>
+            <p>
+                <b>USERNAME:</b>
+                {{selectedNode.userData.name}}
+            </p>
 
             <div *ngIf="selectedNode.nodeLevel == 1">
-                <p>POST: {{selectedNode.name}}</p>
+                <p>
+                    <b>POST:</b>
+                    {{selectedNode.name}}
+                </p>
             </div>
 
             <div *ngIf="selectedNode.nodeLevel == 2">
                 <p>
-                    POST: {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}}
+                    <b>POST:</b>
+                    {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}}
                 </p>
-                <p>COMMENT: {{selectedNode.name}}</p>
+                <p>
+                    <b>COMMENT:</b>
+                    <br>
+                    {{selectedNode.name}}
+                </p>
             </div>
         </div>
     </div>

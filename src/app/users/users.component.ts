@@ -7,6 +7,7 @@ import { TreeNode, TreeComponent } from 'angular-tree-component';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css']
 })
+
 export class UsersComponent implements OnInit {
   nodes;
   options;
