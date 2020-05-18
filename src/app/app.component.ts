@@ -11,9 +11,18 @@ export class AppComponent {
   title = 'angular2-tree-example';
   users = userData.users;
   selectedNode: any;
+  actionButtonText: string;
 
   receiveSelectedNode($event) {
     this.selectedNode = $event.selectedNode;
+
+    if (this.selectedNode.nodeLevel == 0) {
+      this.actionButtonText = "Add User";
+    } else if (this.selectedNode.nodeLevel == 1) {
+      this.actionButtonText = "Add Post";
+    } else {
+      this.actionButtonText = "Add Comment";
+    }
   }
 
   getPostNameByUuid(userPosts, postUuid) {

@@ -22,7 +22,7 @@
                     <h2>Selected Node Item</h2>
                 </span>
                 <span class="add-node-item">
-                    <button>Add User</button>
+                    <button>{{actionButtonText}}</button>
                 </span>
             </div>
 
@@ -40,7 +40,6 @@
 
             <hr>
 
-            <!-- <div *ngIf="selectedNode.nodeLevel == 1"> -->
             <div
                 *ngIf="selectedNode.nodeLevel"
                 class="posts-section"
@@ -68,7 +67,6 @@
                     </span>
                 </div>
             </div>
-
         </div>
     </div>
 
