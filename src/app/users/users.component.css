@@ -85,6 +85,11 @@ button {
     border: 1px solid #999;
 }
 
+button .save {
+    background: green !important;
+    margin-right: 2px !important;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -98,3 +103,12 @@ button {
   display: table;
   clear: both;
 } 
+
+form {
+  display: flex;
+}
+
+ input.ng-invalid.ng-touched,
+ textarea.ng-invalid.ng-touched {
+     border: 1px solid red;
+ }

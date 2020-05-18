@@ -22,11 +22,49 @@
                     <h2>Selected Node Item</h2>
                 </span>
                 <span class="add-node-item">
-                    <button>{{actionButtonText}}</button>
+                    <button
+                        type="button"
+                        (click)="displayForm(selectedNode.nodeLevel, newNode)"
+                    >
+                        {{actionButtonText}}
+                    </button>
                 </span>
             </div>
 
-            <div class='user-profile'>
+            <div *ngIf="showForm">
+                <form
+                    #f="ngForm"
+                    (ngSubmit)="onSubmit(f)"
+                >
+                    <div>
+                        <label for="username">Username:</label>
+                        <input
+                            type="text"
+                            name="username"
+                            ngModel
+                            required
+                        >
+                        <span *ngIf="f.submitted && username.invalid">Username is required</span>
+                    </div>
+
+                    <div>
+                        <br>
+                        <button
+                            type="submit"
+                            class="save"
+                            [disabled]="!f.valid"
+                        >
+                            Save
+                        </button>
+                        <button type="button">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div
+                class='user-profile'
+                *ngIf="!showForm"
+            >
                 <div class='user-image'></div>
                 <div class="user-content">
                     <span class="user-name">{{selectedNode.userData.name}}</span>
@@ -41,7 +79,7 @@
             <hr>
 
             <div
-                *ngIf="selectedNode.nodeLevel"
+                *ngIf="selectedNode.nodeLevel && !showForm"
                 class="posts-section"
             >
                 <div>

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import * as userData from '../data.json'
 import { TreeNode, TreeComponent } from 'angular-tree-component';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-users-tree',
@@ -16,6 +17,8 @@ export class UsersComponent implements OnInit {
   @ViewChild(TreeComponent, { static: false })
   private tree: TreeComponent;
   @Output() onNodeSelection: any = new EventEmitter();
+
+  private subscription: Subscription;
 
   constructor() {
     this.users = userData.users;
@@ -44,10 +47,20 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  // addNode() {
-  //   this.nodes.push({ name: 'another node' });
-  //   this.tree.treeModel.update();
-  // }
+  expandCreatedNode(nodeId) {
+    const createdNodeInterval = interval();
+
+    this.subscription = createdNodeInterval
+      .subscribe(() => {
+        const createdNode: TreeNode = this.treeModel.getNodeById(nodeId);
+
+        createdNode.expandAll();
+        createdNode.setActiveAndVisible();
+
+        //Unsubscribe after task completion
+        this.subscription.unsubscribe();
+      })
+  }
 
   populateNodesStructure(usersData) {
     this.nodes = [];
