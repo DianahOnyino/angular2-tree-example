@@ -17,31 +17,58 @@
             class="tree-content"
             *ngIf="selectedNode"
         >
-            <h2>Selected Node Item</h2>
-
-            <p>
-                <b>USERNAME:</b>
-                {{selectedNode.userData.name}}
-            </p>
-
-            <div *ngIf="selectedNode.nodeLevel == 1">
-                <p>
-                    <b>POST:</b>
-                    {{selectedNode.name}}
-                </p>
+            <div class="content-title">
+                <span class="content-title-name">
+                    <h2>Selected Node Item</h2>
+                </span>
+                <span class="add-node-item">
+                    <button>Add User</button>
+                </span>
             </div>
 
-            <div *ngIf="selectedNode.nodeLevel == 2">
-                <p>
-                    <b>POST:</b>
-                    {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}}
-                </p>
-                <p>
+            <div class='user-profile'>
+                <div class='user-image'></div>
+                <div class="user-content">
+                    <span class="user-name">{{selectedNode.userData.name}}</span>
+                    <br>
+                    <span>
+                        Posts:
+                        <span class="posts-count">{{selectedNode.userData.posts.length}}</span>
+                    </span>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- <div *ngIf="selectedNode.nodeLevel == 1"> -->
+            <div
+                *ngIf="selectedNode.nodeLevel"
+                class="posts-section"
+            >
+                <div>
+                    <b>POST: {{'  '}}</b>
+                    <span *ngIf="selectedNode.nodeLevel == 1">{{selectedNode.name}}</span>
+
+                    <span *ngIf="selectedNode.nodeLevel == 2">
+                        {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}}
+                    </span>
+                </div>
+
+                <div
+                    *ngIf="selectedNode.nodeLevel == 2"
+                    class="comment"
+                >
                     <b>COMMENT:</b>
                     <br>
                     {{selectedNode.name}}
-                </p>
+                    <br>
+                    <span class="comment-user">
+                        by
+                        <b>{{selectedNode.userData.name}}</b>
+                    </span>
+                </div>
             </div>
+
         </div>
     </div>
 
