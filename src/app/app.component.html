@@ -104,7 +104,7 @@
                     <!-- ....................................................... -->
 
                     <div
-                        *ngIf="selectedNode.nodeLevel == 2"
+                        *ngIf="!showForm && selectedNode.nodeLevel == 2"
                         class="comment"
                     >
                         <!-- ;  else noComment -->
@@ -118,13 +118,25 @@
                         </span>
                     </div>
 
+                    <!-- ............................................................... -->
+                    <div *ngIf="showForm && selectedNode.nodeLevel == 2">
+                        <label for="comment">Body:</label>
+                        <input
+                            type="text"
+                            name="comment"
+                            ngModel
+                            required
+                        >
+                    </div>
+                    <!-- .................................................................... -->
+
                     <div *ngIf="!showForm && selectedNode.nodeLevel == 1">
                         <p>You haven't selected any comment</p>
 
                         <button
                             *ngIf="actionButtonText"
                             type="button"
-                            (click)="displayForm(selectedNode.nodeLevel, newNode)"
+                            (click)="displayForm(2)"
                         >
                             {{actionButtonText}}
                         </button>

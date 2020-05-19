@@ -84,7 +84,8 @@ export class UsersComponent implements OnInit {
           name: title,
           children: [],
           nodeLevel: 1,
-          userData: userData
+          userData: userData,
+          postUuid: uuid
         };
 
         nodeItem.children.push(userPost);

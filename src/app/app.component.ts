@@ -19,8 +19,8 @@ export class AppComponent {
   showForm: boolean = false;
   userId = 2;
   postId = 2;
+  commentId = 2;
   nodeLevel;
-  // currentNode = {};
 
   usersChanged = new Subject<{}>();
   private usersChangeSubscription: Subscription;
@@ -60,12 +60,15 @@ export class AppComponent {
 
   addNode(currentNode, newNode) {
     const nodeId = newNode.uuid;
+    let user = this.users.find(user => user.uuid === currentNode.userData.uuid);
 
     if (currentNode.nodeLevel == 0) {
       this.users.push(newNode);
     } else if (currentNode.nodeLevel == 1) {
-      let user = this.users.find(user => user.uuid === currentNode.userData.uuid);
       user.posts.push(newNode);
+    } else {
+      let post = user.posts.find(post => post.uuid === currentNode.id)
+      post.comments.push(newNode);
     }
 
     this.tree.populateNodesStructure(this.users);
@@ -77,9 +80,9 @@ export class AppComponent {
   onSubmit(form: NgForm) {
     let currentNode = this.selectedNode;
     const value = form.value;
-
     this.userId += 1;
     this.postId += 1;
+    this.commentId += 1;
 
     let newNode: any = {
       id: this.userId,
@@ -95,6 +98,12 @@ export class AppComponent {
         title: value.title,
         author: value.author,
         comments: []
+      }
+    } else if (currentNode.nodeLevel == 2) {
+      newNode = {
+        id: this.commentId,
+        uuid: faker.random.uuid(),
+        body: value.comment,
       }
     }
 
