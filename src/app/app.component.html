@@ -17,94 +17,153 @@
             class="tree-content"
             *ngIf="selectedNode"
         >
-            <div class="content-title">
-                <span class="content-title-name">
-                    <h2>Selected Node Item</h2>
-                </span>
-                <span class="add-node-item">
-                    <button
-                        type="button"
-                        (click)="displayForm(selectedNode.nodeLevel, newNode)"
-                    >
-                        {{actionButtonText}}
-                    </button>
-                </span>
-            </div>
+            <form
+                #f="ngForm"
+                (ngSubmit)="onSubmit(f)"
+            >
+                <!-- <div class="content-title">
+                    <span class="add-node-item">
+                        <button
+                            type="button"
+                            (click)="displayForm(selectedNode.nodeLevel, newNode)"
+                        >
+                            Add User
+                        </button>
+                    </span>
+                </div> -->
 
-            <div *ngIf="showForm">
-                <form
-                    #f="ngForm"
-                    (ngSubmit)="onSubmit(f)"
+                <div
+                    class='user-profile'
+                    *ngIf="!showForm || (showForm && selectedNode.nodeLevel !== 0)"
                 >
-                    <div>
-                        <label for="username">Username:</label>
+                    <div class='user-image'></div>
+                    <div class="user-content">
+                        <span class="user-name">{{selectedNode.userData.name}}</span>
+                        <br>
+                        <span>
+                            Posts:
+                            <span class="posts-count">{{selectedNode.userData.posts.length}}</span>
+                        </span>
+                    </div>
+
+                    <span class="add-node-item">
+                        <button
+                            type="button"
+                            (click)="displayForm(0)"
+                        >
+                            Add User
+                        </button>
+                    </span>
+                </div>
+
+                <div *ngIf="showForm && selectedNode.nodeLevel === 0">
+                    <label for="username">Username:</label>
+                    <input
+                        type="text"
+                        name="username"
+                        ngModel
+                        required
+                    >
+                    <span *ngIf="f.submitted && username.invalid">Username is required</span>
+                </div>
+
+                <hr>
+
+                <div class="posts-section">
+                    <!-- *ngIf="selectedNode.nodeLevel && !showForm" -->
+
+                    <!-- ; else noPost -->
+                    <div *ngIf="!showForm">
+                        <b>POST: {{'  '}}</b>
+                        <span *ngIf="selectedNode.nodeLevel == 1">{{selectedNode.name}}</span>
+
+                        <span *ngIf="selectedNode.nodeLevel == 2">
+                            {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}}
+                        </span>
+                    </div>
+                    <!-- ............................................ -->
+                    <div *ngIf="showForm && selectedNode.nodeLevel == 1">
+                        <label for="title">Post title:</label>
                         <input
                             type="text"
-                            name="username"
+                            name="title"
                             ngModel
                             required
                         >
-                        <span *ngIf="f.submitted && username.invalid">Username is required</span>
-                    </div>
-
-                    <div>
                         <br>
-                        <button
-                            type="submit"
-                            class="save"
-                            [disabled]="!f.valid"
+                        <br>
+                        <label for="title">Author:</label>
+                        <input
+                            type="text"
+                            name="author"
+                            ngModel
+                            required
                         >
-                            Save
-                        </button>
-                        <button type="button">Cancel</button>
                     </div>
-                </form>
-            </div>
 
-            <div
-                class='user-profile'
-                *ngIf="!showForm"
-            >
-                <div class='user-image'></div>
-                <div class="user-content">
-                    <span class="user-name">{{selectedNode.userData.name}}</span>
-                    <br>
-                    <span>
-                        Posts:
-                        <span class="posts-count">{{selectedNode.userData.posts.length}}</span>
-                    </span>
-                </div>
-            </div>
+                    <!-- ....................................................... -->
 
-            <hr>
+                    <div
+                        *ngIf="selectedNode.nodeLevel == 2"
+                        class="comment"
+                    >
+                        <!-- ;  else noComment -->
+                        <b>COMMENT:</b>
+                        <br>
+                        {{selectedNode.name}}
+                        <br>
+                        <span class="comment-user">
+                            by
+                            <b>{{selectedNode.userData.name}}</b>
+                        </span>
+                    </div>
 
-            <div
-                *ngIf="selectedNode.nodeLevel && !showForm"
-                class="posts-section"
-            >
-                <div>
-                    <b>POST: {{'  '}}</b>
-                    <span *ngIf="selectedNode.nodeLevel == 1">{{selectedNode.name}}</span>
+                    <div *ngIf="!showForm && selectedNode.nodeLevel == 1">
+                        <p>You haven't selected any comment</p>
 
-                    <span *ngIf="selectedNode.nodeLevel == 2">
-                        {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}}
-                    </span>
+                        <button
+                            *ngIf="actionButtonText"
+                            type="button"
+                            (click)="displayForm(selectedNode.nodeLevel, newNode)"
+                        >
+                            {{actionButtonText}}
+                        </button>
+                    </div>
                 </div>
 
+                <div *ngIf="!showForm && selectedNode.nodeLevel == 0">
+                    <p>You haven't selected any post</p>
+
+                    <button
+                        *ngIf="actionButtonText"
+                        type="button"
+                        (click)="displayForm(1)"
+                    >
+                        {{actionButtonText}}
+                    </button>
+                </div>
+
+                <!-- Action Buttons -->
                 <div
-                    *ngIf="selectedNode.nodeLevel == 2"
-                    class="comment"
+                    *ngIf="showForm"
+                    class='form-footer'
                 >
-                    <b>COMMENT:</b>
                     <br>
-                    {{selectedNode.name}}
-                    <br>
-                    <span class="comment-user">
-                        by
-                        <b>{{selectedNode.userData.name}}</b>
-                    </span>
+                    <button
+                        type="submit"
+                        class="button-primary save"
+                        [disabled]="!f.valid"
+                    >
+                        Save
+                    </button>
+                    <button
+                        type="button"
+                        class="button-secondary save"
+                    >
+                        Cancel
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 

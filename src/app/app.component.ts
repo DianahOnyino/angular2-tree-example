@@ -18,7 +18,9 @@ export class AppComponent {
   actionButtonText: string;
   showForm: boolean = false;
   userId = 2;
+  postId = 2;
   nodeLevel;
+  // currentNode = {};
 
   usersChanged = new Subject<{}>();
   private usersChangeSubscription: Subscription;
@@ -41,10 +43,8 @@ export class AppComponent {
     this.selectedNode = $event.selectedNode;
 
     if (this.selectedNode.nodeLevel == 0) {
-      this.actionButtonText = "Add User";
-    } else if (this.selectedNode.nodeLevel == 1) {
       this.actionButtonText = "Add Post";
-    } else {
+    } else if (this.selectedNode.nodeLevel == 1) {
       this.actionButtonText = "Add Comment";
     }
   }
@@ -53,14 +53,20 @@ export class AppComponent {
     return userPosts.find(post => post.uuid === postUuid).title;
   }
 
-  displayForm(currentNodeLevel) {
+  displayForm(nodeLevel) {
     this.showForm = true;
-    this.nodeLevel = currentNodeLevel;
+    this.selectedNode.nodeLevel = nodeLevel;
   }
 
-  addNode(newNode) {
+  addNode(currentNode, newNode) {
     const nodeId = newNode.uuid;
-    this.users.push(newNode);
+
+    if (currentNode.nodeLevel == 0) {
+      this.users.push(newNode);
+    } else if (currentNode.nodeLevel == 1) {
+      let user = this.users.find(user => user.uuid === currentNode.userData.uuid);
+      user.posts.push(newNode);
+    }
 
     this.tree.populateNodesStructure(this.users);
 
@@ -69,17 +75,30 @@ export class AppComponent {
   }
 
   onSubmit(form: NgForm) {
+    let currentNode = this.selectedNode;
     const value = form.value;
-    this.userId += 1;
 
-    const newNode = {
+    this.userId += 1;
+    this.postId += 1;
+
+    let newNode: any = {
       id: this.userId,
       uuid: faker.random.uuid(),
       name: value.username,
       posts: []
     }
 
-    this.addNode(newNode);
+    if (currentNode.nodeLevel == 1) {
+      newNode = {
+        id: this.postId,
+        uuid: faker.random.uuid(),
+        title: value.title,
+        author: value.author,
+        comments: []
+      }
+    }
+
+    this.addNode(currentNode, newNode);
     this.usersChanged.next(this.users.slice());
 
     this.showForm = false;

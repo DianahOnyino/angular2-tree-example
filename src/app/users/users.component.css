@@ -56,8 +56,8 @@
     font-weight: 600;
 }
 
-.posts-count {
-
+.user-profile .add-node-item {
+   margin-left:auto;
 }
 
 .posts-section {
@@ -85,9 +85,17 @@ button {
     border: 1px solid #999;
 }
 
-button .save {
-    background: green !important;
-    margin-right: 2px !important;
+.button-primary {
+    background: rgb(0, 128, 0) !important;
+    color: black;
+}
+
+.button-secondary {
+    background: grey !important;
+}
+
+.form-footer .save {
+    margin-right: 5px !important;
 }
 
 * {
@@ -103,10 +111,6 @@ button .save {
   display: table;
   clear: both;
 } 
-
-form {
-  display: flex;
-}
 
  input.ng-invalid.ng-touched,
  textarea.ng-invalid.ng-touched {
