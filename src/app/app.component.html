@@ -21,17 +21,6 @@
                 #f="ngForm"
                 (ngSubmit)="onSubmit(f)"
             >
-                <!-- <div class="content-title">
-                    <span class="add-node-item">
-                        <button
-                            type="button"
-                            (click)="displayForm(selectedNode.nodeLevel, newNode)"
-                        >
-                            Add User
-                        </button>
-                    </span>
-                </div> -->
-
                 <div
                     class='user-profile'
                     *ngIf="!showForm || (showForm && selectedNode.nodeLevel !== 0)"
@@ -70,19 +59,14 @@
                 <hr>
 
                 <div class="posts-section">
-                    <!-- *ngIf="selectedNode.nodeLevel && !showForm" -->
-
-                    <!-- ; else noPost -->
                     <div *ngIf="!showForm">
                         <b>POST: {{'  '}}</b>
                         <span *ngIf="selectedNode.nodeLevel == 1">{{selectedNode.name}}</span>
 
                         <span *ngIf="selectedNode.nodeLevel == 2">
-                            <!-- {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}} -->
                             {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}}
                         </span>
                     </div>
-                    <!-- ............................................ -->
                     <div *ngIf="showForm && selectedNode.nodeLevel == 1">
                         <label for="title">Post title:</label>
                         <input
@@ -102,13 +86,10 @@
                         >
                     </div>
 
-                    <!-- ....................................................... -->
-
                     <div
                         *ngIf="!showForm && selectedNode.nodeLevel == 2"
                         class="comment"
                     >
-                        <!-- ;  else noComment -->
                         <b>COMMENT:</b>
                         <br>
                         {{selectedNode.name}}
@@ -119,16 +100,8 @@
                         </span>
                     </div>
 
-                    <!-- ............................................................... -->
                     <div *ngIf="showForm && selectedNode.nodeLevel == 2">
                         <label for="comment">Body:</label>
-                        <!-- <textarea
-                            rows="4"
-                            type="text"
-                            name="comment"
-                            ngModel
-                            required
-                        > -->
                         <textarea
                             name="comment"
                             cols="70"
@@ -138,7 +111,6 @@
                         >
                         </textarea>
                     </div>
-                    <!-- .................................................................... -->
 
                     <div *ngIf="!showForm && selectedNode.nodeLevel == 1">
                         <p>You haven't selected any comment</p>
