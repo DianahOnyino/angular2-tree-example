@@ -195,6 +195,11 @@ export class AppComponent {
 
     if (selectedNodeItem.nodeLevel == 1) {
       let post = this.getPostByUuid(userPosts, selectedNodeItem.postUuid);
+
+      if (post.comments) {
+        return "This post has comments attached to it hence can't be deleted."
+      }
+
       const index: number = userPosts.indexOf(post);
 
       userPosts.splice(index, 1);
