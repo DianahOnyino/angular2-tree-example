@@ -50,7 +50,8 @@ export class AppComponent {
   }
 
   getPostNameByUuid(userPosts, postUuid) {
-    return userPosts.find(post => post.uuid === postUuid).title;
+    const post = userPosts.find(post => post.uuid === postUuid);
+    return post ? post.title : '';
   }
 
   displayForm(nodeLevel) {
@@ -112,6 +113,11 @@ export class AppComponent {
 
     this.showForm = false;
     form.reset();
+  }
+
+  onCancel(form: NgForm) {
+    form.reset();
+    this.showForm = false;
   }
 
   ngOnDestroy(): void {

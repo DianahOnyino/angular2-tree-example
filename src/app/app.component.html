@@ -78,6 +78,7 @@
                         <span *ngIf="selectedNode.nodeLevel == 1">{{selectedNode.name}}</span>
 
                         <span *ngIf="selectedNode.nodeLevel == 2">
+                            <!-- {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}} -->
                             {{getPostNameByUuid(selectedNode.userData.posts, selectedNode.postUuid)}}
                         </span>
                     </div>
@@ -121,12 +122,21 @@
                     <!-- ............................................................... -->
                     <div *ngIf="showForm && selectedNode.nodeLevel == 2">
                         <label for="comment">Body:</label>
-                        <input
+                        <!-- <textarea
+                            rows="4"
                             type="text"
                             name="comment"
                             ngModel
                             required
+                        > -->
+                        <textarea
+                            name="comment"
+                            cols="70"
+                            rows="4"
+                            ngModel
+                            required
                         >
+                        </textarea>
                     </div>
                     <!-- .................................................................... -->
 
@@ -171,6 +181,7 @@
                     <button
                         type="button"
                         class="button-secondary save"
+                        (click)="onCancel(f)"
                     >
                         Cancel
                     </button>
