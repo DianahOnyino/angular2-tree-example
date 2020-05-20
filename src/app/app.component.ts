@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import * as userData from '../app/data.json'
 import { NgForm } from '@angular/forms';
 import * as faker from 'faker';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, interval } from 'rxjs';
 import { UsersComponent } from './users/users.component';
 
 @Component({
@@ -24,9 +24,16 @@ export class AppComponent {
 
   usersChanged = new Subject<{}>();
   private usersChangeSubscription: Subscription;
+  subscription: Subscription;
 
   @ViewChild(UsersComponent, { static: false })
   private tree: UsersComponent;
+  @ViewChild('f', { static: false }) userForm: NgForm
+  editMode = false;
+  startedEditing = new Subject<number>();
+
+  post: any;
+  comment: any;
 
   ngOnInit() {
     this.users = userData.users;
@@ -50,8 +57,16 @@ export class AppComponent {
   }
 
   getPostNameByUuid(userPosts, postUuid) {
-    const post = userPosts.find(post => post.uuid === postUuid);
+    const post = this.getPostByUuid(userPosts, postUuid);
     return post ? post.title : '';
+  }
+
+  getPostByUuid(userPosts, postUuid) {
+    return userPosts.find(post => post.uuid === postUuid);
+  }
+
+  getCommentByUuid(userComments, commentUuid) {
+    return userComments.find(comment => comment.uuid === commentUuid);
   }
 
   displayForm(nodeLevel) {
@@ -59,17 +74,48 @@ export class AppComponent {
     this.selectedNode.nodeLevel = nodeLevel;
   }
 
-  addNode(currentNode, newNode) {
-    const nodeId = newNode.uuid;
-    let user = this.users.find(user => user.uuid === currentNode.userData.uuid);
+  toggleEditMode(form: NgForm, selectedNode) {
+    const setFormValuesInterval = interval();
+    this.post = this.getPostByUuid(selectedNode.userData.posts, selectedNode.postUuid);
+    this.comment = this.getCommentByUuid(this.post.comments, selectedNode.id)
 
-    if (currentNode.nodeLevel == 0) {
-      this.users.push(newNode);
-    } else if (currentNode.nodeLevel == 1) {
-      user.posts.push(newNode);
+    this.subscription = setFormValuesInterval
+      .subscribe(() => {
+        if (selectedNode.nodeLevel == 2) {
+          form.control.patchValue({
+            comment: selectedNode.name,
+          });
+        } else {
+          form.control.patchValue({
+            postTitle: selectedNode.name,
+            author: this.post.author
+          });
+        }
+
+        //Unsubscribe after task completion
+        this.subscription.unsubscribe();
+      })
+
+    this.editMode = true;
+    this.showForm = true;
+  }
+
+  addNode(currentNode, newNode) {
+    let nodeId = newNode.uuid;
+
+    if (!this.editMode) {
+      let user = this.users.find(user => user.uuid === currentNode.userData.uuid);
+
+      if (currentNode.nodeLevel == 0) {
+        this.users.push(newNode);
+      } else if (currentNode.nodeLevel == 1) {
+        user.posts.push(newNode);
+      } else {
+        let post = user.posts.find(post => post.uuid === currentNode.id)
+        post.comments.push(newNode);
+      }
     } else {
-      let post = user.posts.find(post => post.uuid === currentNode.id)
-      post.comments.push(newNode);
+      this.editMode = false;
     }
 
     this.tree.populateNodesStructure(this.users);
@@ -78,33 +124,51 @@ export class AppComponent {
     this.tree.expandCreatedNode(nodeId);
   }
 
+
+
   onSubmit(form: NgForm) {
-    let currentNode = this.selectedNode;
     const value = form.value;
-    this.userId += 1;
-    this.postId += 1;
-    this.commentId += 1;
+    let currentNode = this.selectedNode;
+    let newNode: {};
 
-    let newNode: any = {
-      id: this.userId,
-      uuid: faker.random.uuid(),
-      name: value.username,
-      posts: []
-    }
+    if (this.editMode) {
+      if (currentNode.nodeLevel == 0) {
 
-    if (currentNode.nodeLevel == 1) {
-      newNode = {
-        id: this.postId,
-        uuid: faker.random.uuid(),
-        title: value.title,
-        author: value.author,
-        comments: []
+      } else if (currentNode.nodeLevel == 1) {
+        this.post.title = value.postTitle;
+        this.post.author = value.author;
+
+        newNode = this.post;
+      } else {
+        this.comment.body = value.comment;
+        newNode = this.comment;
       }
-    } else if (currentNode.nodeLevel == 2) {
+    } else {
+      this.userId += 1;
+      this.postId += 1;
+      this.commentId += 1;
+
       newNode = {
-        id: this.commentId,
+        id: this.userId,
         uuid: faker.random.uuid(),
-        body: value.comment,
+        name: value.username,
+        posts: []
+      }
+
+      if (currentNode.nodeLevel == 1) {
+        newNode = {
+          id: this.postId,
+          uuid: faker.random.uuid(),
+          title: value.postTitle,
+          author: value.author,
+          comments: []
+        }
+      } else if (currentNode.nodeLevel == 2) {
+        newNode = {
+          id: this.commentId,
+          uuid: faker.random.uuid(),
+          body: value.comment,
+        }
       }
     }
 
@@ -113,6 +177,12 @@ export class AppComponent {
 
     this.showForm = false;
     form.reset();
+  }
+
+
+
+  onEdit() {
+    console.log("Editing.....: ", this.showForm)
   }
 
   onCancel(form: NgForm) {
