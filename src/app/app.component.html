@@ -68,6 +68,14 @@
                             >
                                 Edit Post
                             </button>
+
+                            <button
+                                type="button"
+                                (click)="onDelete(selectedNode)"
+                            >
+                                Delete Post
+                            </button>
+
                         </span>
 
                         <span *ngIf="selectedNode.nodeLevel == 2">
@@ -103,6 +111,12 @@
                             (click)="toggleEditMode(f, selectedNode)"
                         >
                             Edit Comment
+                        </button>
+                        <button
+                            type="button"
+                            (click)="onDelete(selectedNode)"
+                        >
+                            Delete Comment
                         </button>
                         <br>
                         {{selectedNode.name}}

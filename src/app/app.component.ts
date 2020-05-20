@@ -184,14 +184,34 @@ export class AppComponent {
     form.reset();
   }
 
-  onEdit() {
-    console.log("Editing.....: ", this.showForm)
-  }
-
   onCancel(form: NgForm) {
     form.reset();
     this.showForm = false;
     this.editMode = false;
+  }
+
+  onDelete(selectedNodeItem) {
+    let userPosts = selectedNodeItem.userData.posts;
+
+    if (selectedNodeItem.nodeLevel == 1) {
+      let post = this.getPostByUuid(userPosts, selectedNodeItem.postUuid);
+      const index: number = userPosts.indexOf(post);
+
+      userPosts.splice(index, 1);
+    } else if (selectedNodeItem.nodeLevel == 2) {
+      let post = this.getPostByUuid(userPosts, selectedNodeItem.postUuid);
+      let userComments = post.comments;
+
+      let comment = this.getCommentByUuid(userComments, selectedNodeItem.id)
+      const index: number = userComments.indexOf(comment);
+
+      userComments.splice(index, 1);
+    }
+
+    this.usersChanged.next(this.users.slice());
+
+    this.tree.populateNodesStructure(this.users);
+    this.tree.treeModel.update();
   }
 
   ngOnDestroy(): void {
