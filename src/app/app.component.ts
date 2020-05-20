@@ -21,19 +21,18 @@ export class AppComponent {
   postId = 2;
   commentId = 2;
   nodeLevel;
+  editMode = false;
+  post: any;
+  comment: any;
 
   usersChanged = new Subject<{}>();
   private usersChangeSubscription: Subscription;
-  subscription: Subscription;
+  private subscription: Subscription;
 
   @ViewChild(UsersComponent, { static: false })
   private tree: UsersComponent;
-  @ViewChild('f', { static: false }) userForm: NgForm
-  editMode = false;
-  startedEditing = new Subject<number>();
 
-  post: any;
-  comment: any;
+  @ViewChild('f', { static: false }) form: NgForm
 
   ngOnInit() {
     this.users = userData.users;
@@ -53,6 +52,16 @@ export class AppComponent {
       this.actionButtonText = "Add Post";
     } else if (this.selectedNode.nodeLevel == 1) {
       this.actionButtonText = "Add Comment";
+    }
+
+    //Allow modelling of input values upon change of selected node while on editMode
+    if (this.editMode) {
+      if (this.selectedNode.nodeLevel !== 0) {
+        this.toggleEditMode(this.form, this.selectedNode)
+      } else {
+        this.editMode = false;
+        this.showForm = false;
+      }
     }
   }
 
@@ -74,7 +83,7 @@ export class AppComponent {
     this.selectedNode.nodeLevel = nodeLevel;
   }
 
-  toggleEditMode(form: NgForm, selectedNode) {
+  toggleEditMode(form, selectedNode) {
     const setFormValuesInterval = interval();
     this.post = this.getPostByUuid(selectedNode.userData.posts, selectedNode.postUuid);
     this.comment = this.getCommentByUuid(this.post.comments, selectedNode.id)
@@ -85,7 +94,7 @@ export class AppComponent {
           form.control.patchValue({
             comment: selectedNode.name,
           });
-        } else {
+        } else if (selectedNode.nodeLevel == 1) {
           form.control.patchValue({
             postTitle: selectedNode.name,
             author: this.post.author
@@ -124,22 +133,18 @@ export class AppComponent {
     this.tree.expandCreatedNode(nodeId);
   }
 
-
-
   onSubmit(form: NgForm) {
     const value = form.value;
     let currentNode = this.selectedNode;
     let newNode: {};
 
     if (this.editMode) {
-      if (currentNode.nodeLevel == 0) {
-
-      } else if (currentNode.nodeLevel == 1) {
+      if (currentNode.nodeLevel == 1) {
         this.post.title = value.postTitle;
         this.post.author = value.author;
 
         newNode = this.post;
-      } else {
+      } else if (currentNode.nodeLevel == 2) {
         this.comment.body = value.comment;
         newNode = this.comment;
       }
@@ -179,8 +184,6 @@ export class AppComponent {
     form.reset();
   }
 
-
-
   onEdit() {
     console.log("Editing.....: ", this.showForm)
   }
@@ -188,6 +191,7 @@ export class AppComponent {
   onCancel(form: NgForm) {
     form.reset();
     this.showForm = false;
+    this.editMode = false;
   }
 
   ngOnDestroy(): void {

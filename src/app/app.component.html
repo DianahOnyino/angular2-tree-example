@@ -45,7 +45,7 @@
                     </span>
                 </div>
 
-                <div *ngIf="showForm && selectedNode.nodeLevel === 0">
+                <div *ngIf="showForm && selectedNode.nodeLevel === 0 && !editMode">
                     <label for="username">Username:</label>
                     <input
                         type="text"
