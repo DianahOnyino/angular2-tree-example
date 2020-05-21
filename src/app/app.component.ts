@@ -136,12 +136,16 @@ export class AppComponent {
   }
 
   onDelete(selectedNodeItem) {
-    this.userService.delete(selectedNodeItem);
+    let deleteStatus = this.userService.delete(selectedNodeItem);
 
     this.usersChanged.next(this.users.slice());
 
     let nodeId = selectedNodeItem.userData.uuid;
     this.refreshNodeItems(nodeId);
+
+    if (deleteStatus.successfulDelete) {
+      alert("Confirm Delete");
+    }
   }
 
   refreshNodeItems(nodeId) {

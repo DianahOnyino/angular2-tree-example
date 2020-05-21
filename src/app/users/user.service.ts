@@ -73,18 +73,21 @@ export class UserService {
 
     delete(selectedNodeItem) {
         let userPosts = selectedNodeItem.userData.posts;
+        let successfulDelete = false;
 
         if (selectedNodeItem.nodeLevel == 1) {
             let post = this.getPostByUuid(userPosts, selectedNodeItem.postUuid);
 
             if (post.comments.length !== 0) {
                 alert("This post has comments attached to it hence can't be deleted.")
-                return;
+                return { successfulDelete: successfulDelete };
             }
 
             const index: number = userPosts.indexOf(post);
 
             userPosts.splice(index, 1);
+            successfulDelete = true;
+
         } else if (selectedNodeItem.nodeLevel == 2) {
             let post = this.getPostByUuid(userPosts, selectedNodeItem.postUuid);
             let userComments = post.comments;
@@ -93,8 +96,9 @@ export class UserService {
             const index: number = userComments.indexOf(comment);
 
             userComments.splice(index, 1);
+            successfulDelete = true;
         }
 
-        return userPosts;
+        return { successfulDelete: successfulDelete };
     }
 }
