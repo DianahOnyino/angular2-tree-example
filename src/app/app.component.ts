@@ -1,9 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import * as userData from '../app/data.json'
 import { NgForm } from '@angular/forms';
-import * as faker from 'faker';
 import { Subject, Subscription, interval } from 'rxjs';
 import { UsersComponent } from './users/users.component';
+import { UserService } from './users/user.service';
 
 @Component({
   selector: 'app-root',
@@ -17,9 +17,6 @@ export class AppComponent {
   selectedNode: any;
   actionButtonText: string;
   showForm: boolean = false;
-  userId = 2;
-  postId = 2;
-  commentId = 2;
   nodeLevel;
   editMode = false;
   post: any;
@@ -33,6 +30,8 @@ export class AppComponent {
   private tree: UsersComponent;
 
   @ViewChild('f', { static: false }) form: NgForm
+
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
     this.users = userData.users;
@@ -66,16 +65,8 @@ export class AppComponent {
   }
 
   getPostNameByUuid(userPosts, postUuid) {
-    const post = this.getPostByUuid(userPosts, postUuid);
+    const post = this.userService.getPostByUuid(userPosts, postUuid);
     return post ? post.title : '';
-  }
-
-  getPostByUuid(userPosts, postUuid) {
-    return userPosts.find(post => post.uuid === postUuid);
-  }
-
-  getCommentByUuid(userComments, commentUuid) {
-    return userComments.find(comment => comment.uuid === commentUuid);
   }
 
   displayForm(nodeLevel) {
@@ -85,8 +76,8 @@ export class AppComponent {
 
   toggleEditMode(form, selectedNode) {
     const setFormValuesInterval = interval();
-    this.post = this.getPostByUuid(selectedNode.userData.posts, selectedNode.postUuid);
-    this.comment = this.getCommentByUuid(this.post.comments, selectedNode.id)
+    this.post = this.userService.getPostByUuid(selectedNode.userData.posts, selectedNode.postUuid);
+    this.comment = this.userService.getCommentByUuid(this.post.comments, selectedNode.id)
 
     this.subscription = setFormValuesInterval
       .subscribe(() => {
@@ -111,71 +102,25 @@ export class AppComponent {
 
   addNode(currentNode, newNode) {
     let nodeId = newNode.uuid;
+    let users = this.users;
 
     if (!this.editMode) {
-      let user = this.users.find(user => user.uuid === currentNode.userData.uuid);
-
-      if (currentNode.nodeLevel == 0) {
-        this.users.push(newNode);
-      } else if (currentNode.nodeLevel == 1) {
-        user.posts.push(newNode);
-      } else {
-        let post = user.posts.find(post => post.uuid === currentNode.id)
-        post.comments.push(newNode);
-      }
+      this.userService.pushNewNodeToUsersArray(users, currentNode, newNode);
     } else {
       this.editMode = false;
     }
 
-    this.tree.populateNodesStructure(this.users);
-
-    this.tree.treeModel.update();
-    this.tree.expandCreatedNode(nodeId);
+    this.refreshNodeItems(nodeId);
   }
 
   onSubmit(form: NgForm) {
     const value = form.value;
-    let currentNode = this.selectedNode;
-    let newNode: {};
+    const currentNode = this.selectedNode;
+    const post = this.post;
+    const comment = this.comment;
 
-    if (this.editMode) {
-      if (currentNode.nodeLevel == 1) {
-        this.post.title = value.postTitle;
-        this.post.author = value.author;
-
-        newNode = this.post;
-      } else if (currentNode.nodeLevel == 2) {
-        this.comment.body = value.comment;
-        newNode = this.comment;
-      }
-    } else {
-      this.userId += 1;
-      this.postId += 1;
-      this.commentId += 1;
-
-      newNode = {
-        id: this.userId,
-        uuid: faker.random.uuid(),
-        name: value.username,
-        posts: []
-      }
-
-      if (currentNode.nodeLevel == 1) {
-        newNode = {
-          id: this.postId,
-          uuid: faker.random.uuid(),
-          title: value.postTitle,
-          author: value.author,
-          comments: []
-        }
-      } else if (currentNode.nodeLevel == 2) {
-        newNode = {
-          id: this.commentId,
-          uuid: faker.random.uuid(),
-          body: value.comment,
-        }
-      }
-    }
+    const newNode = this.userService
+      .populateNewNode(value, currentNode, post, comment, this.editMode);
 
     this.addNode(currentNode, newNode);
     this.usersChanged.next(this.users.slice());
@@ -191,32 +136,18 @@ export class AppComponent {
   }
 
   onDelete(selectedNodeItem) {
-    let userPosts = selectedNodeItem.userData.posts;
-
-    if (selectedNodeItem.nodeLevel == 1) {
-      let post = this.getPostByUuid(userPosts, selectedNodeItem.postUuid);
-
-      if (post.comments) {
-        return "This post has comments attached to it hence can't be deleted."
-      }
-
-      const index: number = userPosts.indexOf(post);
-
-      userPosts.splice(index, 1);
-    } else if (selectedNodeItem.nodeLevel == 2) {
-      let post = this.getPostByUuid(userPosts, selectedNodeItem.postUuid);
-      let userComments = post.comments;
-
-      let comment = this.getCommentByUuid(userComments, selectedNodeItem.id)
-      const index: number = userComments.indexOf(comment);
-
-      userComments.splice(index, 1);
-    }
+    this.userService.delete(selectedNodeItem);
 
     this.usersChanged.next(this.users.slice());
 
+    let nodeId = selectedNodeItem.userData.uuid;
+    this.refreshNodeItems(nodeId);
+  }
+
+  refreshNodeItems(nodeId) {
     this.tree.populateNodesStructure(this.users);
     this.tree.treeModel.update();
+    this.tree.expandCreatedNode(nodeId);
   }
 
   ngOnDestroy(): void {
