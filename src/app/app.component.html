@@ -45,7 +45,10 @@
                     </span>
                 </div>
 
-                <div *ngIf="showForm && selectedNode.nodeLevel === 0 && !editMode">
+                <div
+                    *ngIf="showForm && selectedNode.nodeLevel === 0 && !editMode"
+                    class="input-section"
+                >
                     <label for="username">Username:</label>
                     <input
                         type="text"
@@ -61,23 +64,28 @@
                     <div *ngIf="!showForm">
                         <b>POST: {{'  '}}</b>
                         <span *ngIf="selectedNode.nodeLevel == 1">
-                            {{selectedNode.name}}
-                            <button
-                                type="button"
-                                class="button-edit"
+                            <span
+                                class="edit"
                                 (click)="toggleEditMode(f, selectedNode)"
                             >
                                 <i class="fa fa-edit"></i>
-                            </button>
+                            </span>
 
-                            <button
-                                class="btn"
-                                type="button"
-                                (click)="onDelete(selectedNode)"
-                            >
+                            <span (click)="onDelete(selectedNode)">
                                 <i class="fa fa-trash"></i>
-                            </button>
+                            </span>
+                            <br>
+                            {{selectedNode.name}}
+                            <!-- <span
+                                class="edit"
+                                (click)="toggleEditMode(f, selectedNode)"
+                            >
+                                <i class="fa fa-edit"></i>
+                            </span>
 
+                            <span (click)="onDelete(selectedNode)">
+                                <i class="fa fa-trash"></i>
+                            </span> -->
                         </span>
 
                         <span *ngIf="selectedNode.nodeLevel == 2">
@@ -85,44 +93,42 @@
                         </span>
                     </div>
                     <div *ngIf="showForm && selectedNode.nodeLevel == 1">
-                        <label for="title">Post title:</label>
-                        <input
-                            type="text"
-                            name="postTitle"
-                            ngModel
-                            required
-                        >
-                        <br>
-                        <br>
-                        <label for="title">Author:</label>
-                        <input
-                            type="text"
-                            name="author"
-                            ngModel
-                            required
-                        >
+                        <div class="input-section">
+                            <label for="title">Post title:</label>
+                            <input
+                                type="text"
+                                name="postTitle"
+                                ngModel
+                                required
+                            >
+                        </div>
+
+                        <div class="input-section">
+                            <label for="title">Author:</label>
+                            <input
+                                type="text"
+                                name="author"
+                                ngModel
+                                required
+                            >
+                        </div>
                     </div>
 
                     <div
                         *ngIf="!showForm && selectedNode.nodeLevel == 2"
                         class="comment"
                     >
-                        <b>COMMENT:</b>
-                        <button
-                            type="button"
-                            class="button-edit"
+                        <b>COMMENT: {{'  '}}</b>
+                        <span
+                            class="edit"
                             (click)="toggleEditMode(f, selectedNode)"
                         >
                             <i class="fa fa-edit"></i>
-                        </button>
+                        </span>
 
-                        <button
-                            class="btn"
-                            type="button"
-                            (click)="onDelete(selectedNode)"
-                        >
+                        <span (click)="onDelete(selectedNode)">
                             <i class="fa fa-trash"></i>
-                        </button>
+                        </span>
 
                         <br>
                         {{selectedNode.name}}
@@ -195,7 +201,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <p>Designed by @ Dianne Prinsescah</p>
+    <div class="row footer-tag">
+        <p>Designed by @ Dianah Amimo</p>
     </div>
 </div>
